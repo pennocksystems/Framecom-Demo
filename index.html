@@ -111,13 +111,9 @@
             break;
 case "Discover🌍":
 case "Descubrir🌍":
-  // Open the tab immediately to avoid popup blockers
-  window.open("map.html", "_blank");
-
-  // Then add the response message (in background)
   response = lang === "en"
-    ? "Discover more with our <strong>interactive map!</strong>🔍"
-    : "¡Descubre más con nuestro <strong>mapa interactivo!</strong>🔍";
+    ? 'Discover more with our <strong><a href="map.html" target="_blank">interactive map</a></strong>! 🔍'
+    : '¡Descubre más con nuestro <strong><a href="map.html" target="_blank">mapa interactivo</a></strong>! 🔍';
   appendBotMessage(response);
   break;
           case "CNC⚡":
