@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Framecom Chatbot</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Toggle Button (Robot Emoji or Icon) -->
+  <div id="chatbot-toggle">
+    <img src="images/framecomlogo.png" alt="Chatbot" class="chatbot-logo" />
+  </div>
+
+  <!-- Chatbot Frame -->
+  <div id="chatbot-frame">
+    <div class="chatbot-box">
+      <div class="chat-header">
+        <strong>Framecom</strong>
+        <button class="reset-btn" title="Reset Chat" onclick="resetChat()">⟲</button>
+      </div>
+
+      <div class="chat-body" id="chatbot-messages">
+        <div class="bot-message">Please select your <strong>language</strong> / Por favor seleccione su <strong>idioma</strong> 🌐</div>
+        <div id="chatbot-language-buttons">
+          <button class="chatbot-btn" onclick="chooseLanguage('en')">English</button>
+          <button class="chatbot-btn" onclick="chooseLanguage('es')">Español</button>
+        </div>
+      </div>
+
+      <!-- Button Options Area -->
+      <div id="chatbot-buttons-container" style="display:none;">
+        <div id="chatbot-buttons" class="button-container"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const chatbotToggle = document.getElementById("chatbot-toggle");
+    const chatbotFrame = document.getElementById("chatbot-frame");
+    const messages = document.getElementById("chatbot-messages");
+    const buttonContainer = document.getElementById("chatbot-buttons");
+    const buttonsWrapper = document.getElementById("chatbot-buttons-container");
+   
+    const buttonOptions = {
+      en: ["Services🔨", "Contact📲", "Discover🌍", "CNC⚡"],
+      es: ["Servicios🔨", "Contacto📲", "Descubrir🌍", "CNC⚡"]
+    };
+
+    chatbotToggle.addEventListener("click", () => {
+      chatbotFrame.classList.toggle("show");
+      scrollToBottom();
+    });
+
+    function chooseLanguage(lang) {
+      appendUserMessage(lang === 'en' ? 'English' : 'Español');
+      showTypingIndicator();
+      setTimeout(() => {
+        hideTypingIndicator();
+        appendBotMessage(lang === 'en' ? 'Hi there! How can I assist you?👋' : '¡Hola! ¿En qué puedo ayudarte?👋');
+        renderButtons(lang);
+        scrollToBottom();
+      }, 1000);
+    }
+
+    function renderButtons(lang) {
+      buttonContainer.innerHTML = "";
+      buttonsWrapper.style.display = "flex";
+
+      buttonOptions[lang].forEach(option => {
+        const btn = document.createElement("button");
+        btn.className = "chatbot-btn";
+        btn.innerText = option;
+        btn.onclick = () => handleFAQ(option, lang);
+        buttonContainer.appendChild(btn);
+      });
+    }
+
+    function handleFAQ(text, lang) {
+      appendUserMessage(text);
+      let response = "";
+
+      showTypingIndicator();
+      setTimeout(() => {
+        hideTypingIndicator();
+
+        switch (text) {
+          case "Services🔨":
+          case "Servicios🔨":
+            response = lang === "en"
+              ? "We provide <strong>precision-engineered framing solutions</strong> and <strong>CNC-machined components</strong>. Select a service for <strong>more information</strong>🪚"
+              : "Ofrecemos <strong>soluciones de enmarcado de ingeniería de precisión</strong> y <strong>componentes mecanizados por CNC.</strong> Seleccione un servicio para obtener <strong>más información</strong>🪚";
+            appendBotMessage(response);
+            setTimeout(() => renderServiceButtonsInChat(lang), 500);
+            break;
+
+          case "Contact📲":
+          case "Contacto📲":
+            response = lang === "en"
+              ? `📞 You can contact us anytime!<br><br>
+📧 <strong>Email:</strong><br>sales@framecom.com<br>
+📱 <strong>Phone:</strong><br>(408)592-6187<br>
+📍<strong>Address:</strong><br>4450 Monterey Hwy, Gilroy, CA 95200`
+              : `📞 ¡Puedes contactarnos en cualquier momento!<br><br>
+📧 <strong>Correo:</strong><br>sales@framecom.com<br>
+📱 <strong>Teléfono:</strong><br>(408)592-6187<br>
+📍<strong>Dirección:</strong><br>4450 Monterey Hwy, Gilroy, CA 95200`;
+            appendBotMessage(response);
+            break;
+case "Discover🌍":
+case "Descubrir🌍":
+  // Open the tab immediately to avoid popup blockers
+  window.open("map.html", "_blank");
+
+  // Then add the response message (in background)
+  response = lang === "en"
+    ? "Discover more with our <strong>interactive map!</strong>🔍"
+    : "¡Descubre más con nuestro <strong>mapa interactivo!</strong>🔍";
+  appendBotMessage(response);
+  break;
+          case "CNC⚡":
+            response = lang === "en"
+              ? "Our <strong>CNC</strong> is at the core of Framecom’s craftsmanship. It lets us create wood components with incredible detail, curves, and precision—<strong>quickly and consistently</strong>⚡"
+              : "Nuestro <strong>CNC</strong> es la base de la artesanía de Framecom. Nos permite crear componentes de madera con detalles, curvas y precisión increíbles, de forma <strong>rápida y consistente</strong>⚡";
+            appendBotMessage(response);
+            break;
+
+          default:
+            response = lang === "en" ? "Sorry, I didn’t understand that." : "Lo siento, no entendí eso.";
+            appendBotMessage(response);
+        }
+      }, 1000);
+    }
+
+    function renderServiceButtonsInChat(lang) {
+      const serviceOptions = lang === "en" ? ["Box Beams", "Pergolas", "Framing", "Timber Trusses", "Corbels", "Gates & Doors", "Millwork", "More"] : ["Vigas de caja", "Pérgolas", "Enmarcado", "Vigas de madera", "Corbelos", "Puertas y portones", "Carpintería", "Más"];
+     
+      const buttonContainer = document.createElement('div');
+      buttonContainer.className = 'button-container';
+     
+      serviceOptions.forEach(option => {
+        const btn = document.createElement("button");
+        btn.className = "chatbot-btn service-btn";
+        btn.innerText = option;
+        btn.onclick = () => handleServiceOption(option, lang);
+        buttonContainer.appendChild(btn);
+      });
+
+      messages.appendChild(buttonContainer);
+      scrollToBottom();
+    }
+
+    function handleServiceOption(option, lang) {
+      appendUserMessage(option);
+
+      const links = {
+        "Box Beams": "boxbeams", "Vigas de caja": "boxbeams",
+        "Pergolas": "pergolas", "Pérgolas": "pergolas",
+        "Framing": "framing-components", "Enmarcado": "framing-components",
+        "Timber Trusses": "timber-trusses", "Vigas de madera": "timber-trusses",
+        "Corbels": "corbels", "Corbelos": "corbels",
+        "Gates & Doors": "gates", "Puertas y portones": "gates",
+        "Millwork": "mill-work", "Carpintería": "mill-work",
+        "More": "about-us", "Más": "about-us"
+      };
+
+      if (links[option]) {
+        window.open(`https://framecom.com/${links[option]}/`, "_blank");
+      }
+
+      const response = lang === "en"
+        ? `You selected: <strong>${option}</strong>. We've opened the <strong>${option}</strong> page in a new tab for you!👍`
+        : `Seleccionaste: <strong>${option}</strong>. ¡Hemos abierto la página de <strong>${option}</strong> en una nueva pestaña para ti!👍`;
+
+      appendBotMessage(response);
+    }
+
+    function appendUserMessage(text) {
+      const msg = document.createElement("div");
+      msg.className = "user-message";
+      msg.innerHTML = text;
+      messages.appendChild(msg);
+      scrollToBottom();
+    }
+
+    function appendBotMessage(text) {
+      const msg = document.createElement("div");
+      msg.className = "bot-message";
+      msg.innerHTML = text;
+      messages.appendChild(msg);
+      scrollToBottom();
+    }
+
+    function scrollToBottom() {
+      messages.scrollTop = messages.scrollHeight;
+    }
+
+    function showTypingIndicator() {
+      const typing = document.createElement("div");
+      typing.className = "typing";
+      typing.id = "typing-indicator";
+
+      const dots = document.createElement("div");
+      dots.className = "typing-dots";
+      for (let i = 0; i < 3; i++) {
+        const dot = document.createElement("div");
+        dot.className = "typing-dot";
+        dots.appendChild(dot);
+      }
+
+      typing.appendChild(dots);
+      messages.appendChild(typing);
+      scrollToBottom();
+    }
+
+    function hideTypingIndicator() {
+      const typing = document.getElementById("typing-indicator");
+      if (typing) typing.remove();
+    }
+
+    function resetChat() {
+      messages.innerHTML = `
+        <div class="bot-message">Please select your <strong>language</strong> / Por favor seleccione su <strong>idioma</strong> 🌐</div>
+        <div id="chatbot-language-buttons">
+          <button class="chatbot-btn" onclick="chooseLanguage('en')">English</button>
+          <button class="chatbot-btn" onclick="chooseLanguage('es')">Español</button>
+        </div>`;
+      buttonContainer.innerHTML = "";
+      buttonsWrapper.style.display = "none";
+    }
+  </script>
+</body>
+</html>
+
+
+
+
+
